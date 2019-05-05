@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".MainActivity">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<Button
+			android:id="@+id/btn_show"
+			android:text="动画"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+	
+	
+	</LinearLayout>
+	
+	
+	
+	<com.example.flowviewtest.DraggableFrameLayout
+		android:id="@+id/ll_view"
+		
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+	
+		<RelativeLayout
+			android:layout_marginBottom="50dp"
+			android:layout_gravity="right|bottom"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<LinearLayout
+				android:layout_marginRight="-35dp"
+				android:layout_centerVertical="true"
+				android:id="@+id/ll_msg"
+				android:gravity="center"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView
+					android:id="@+id/tv_msg"
+					android:paddingLeft="25dp"
+					android:paddingRight="45dp"
+					android:maxLength="20"
+					android:maxLines="1"
+					android:background="@drawable/shape_slid_blue_cornar"
+					android:textColor="@android:color/white"
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="50dp" />
+			</LinearLayout>
+		
+			<ImageView
+				android:layout_toRightOf="@+id/ll_msg"
+				android:id="@+id/iv_show"
+				android:padding="15dp"
+				android:background="@drawable/shape_slid_blue_cicle"
+				android:src="@drawable/collection"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+		</RelativeLayout>
+		
+	
+	</com.example.flowviewtest.DraggableFrameLayout>
+	
+
+</FrameLayout>
