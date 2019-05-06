@@ -5,13 +5,40 @@
 	android:layout_height="match_parent"
 	tools:context=".MainActivity">
 	<LinearLayout
+		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="match_parent">
 		<Button
 			android:id="@+id/btn_show"
 			android:text="动画"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" />
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+			<Button
+				android:id="@+id/btn_back"
+				android:text="后退"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+			<EditText
+				android:id="@+id/et_input"
+				android:hint="输入网址"
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content" />
+			<Button
+				android:id="@+id/btn_go"
+				android:text="GO"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+		
+		<WebView
+			android:id="@+id/web_view"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
 	
 	
 	</LinearLayout>
