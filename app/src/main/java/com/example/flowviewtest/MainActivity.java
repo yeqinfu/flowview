@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,7 @@ import com.example.flowviewtest.utils.ViewUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
@@ -48,6 +50,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+    private static final String HOME_URL = "http://go.uc.cn/page/subpage/shipin?uc_param_str=dnfrpfbivecpbtntla";
+    private static final String IPHONE_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
+
+
     TextView tv_msg;
     LinearLayout ll_msg;
     DraggableFrameLayout ll_view;
@@ -93,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 web_view.loadUrl(et_input.getText().toString());
             }
         });
-      mainInit();
 
 
     }
@@ -107,6 +112,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void initWebView() {
         WebSettings settings = web_view.getSettings();
+        settings.setLoadWithOverviewMode(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowUniversalAccessFromFileURLs(true);
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setJavaScriptEnabled(true);
+        settings.setAllowContentAccess(true);
+        settings.setUserAgentString(IPHONE_UA);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+
+        settings.setUserAgentString(IPHONE_UA);
         web_view.setWebViewClient(webViewClient);
         web_view.setWebChromeClient(webChromeClient);
     }
@@ -122,14 +139,29 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     };
 
     private  WebViewClient  webViewClient=new WebViewClient(){
+
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             currentUrl=url;
             super.onPageStarted(view, url, favicon);
+            Log.d("yeqinfu", "onLoadStarted url:" + url);
+
+            WeakReference<LinkedBlockingQueue> detectedTaskUrlQueueWeakReference = new WeakReference<LinkedBlockingQueue>(detectedTaskUrlQueue);
+            Log.d("yeqinfu", "shouldInterceptLoadRequest hint url:" + url);
+            LinkedBlockingQueue  detectedTaskUrlQueue = detectedTaskUrlQueueWeakReference.get();
+            if(detectedTaskUrlQueue != null){
+                detectedTaskUrlQueue.add(new DetectedVideoInfo(url,currentUrl,currentTitle));
+                Log.d("yeqinfu", "shouldInterceptLoadRequest detectTaskUrlList.add(url):" + url);
+            }
+
         }
+
+
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            Log.d("yeqinfu","====== shouldOverrideUrlLoading(WebView view, WebResourceRequest request)=====");
+
             String url=request.getUrl().toString();
             if (!(url.startsWith("http") || url.startsWith("https"))) {
                 //非http https协议 不动作
@@ -141,10 +173,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             String extension = MimeTypeMap.getFileExtensionFromUrl(url);
             if(VideoFormatUtil.containsVideoExtension(extension)){
                 detectedTaskUrlQueue.add(new DetectedVideoInfo(url,currentUrl,currentTitle));
-                Log.d("MainActivity", "shouldOverrideUrlLoading detectTaskUrlList.add(url):" + url);
+                Log.d("yeqinfu", "shouldOverrideUrlLoading detectTaskUrlList.add(url):" + url);
                 return true;
             }
-            Log.d("MainActivity", "shouldOverrideUrlLoading url="+url);
+
+            Log.d("yeqinfu", "shouldOverrideUrlLoading url="+url);
             view.loadUrl(url);
             return true;
 
@@ -242,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void mainInit() {
+        Log.d("yeqinfu","=====mainInit======");
         initWebView();
         initMain();
         web_view.loadUrl("http://www.okzyw.com/");

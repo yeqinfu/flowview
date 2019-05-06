@@ -43,7 +43,7 @@ public class VideoSniffer {
 
     public void startSniffer(){
         stopSniffer();
-        Log.d("VideoSniffer","======启动嗅探======");
+        Log.d("yeqinfu","======启动嗅探======");
         threadList = new ArrayList<Thread>();
         for(int i=0;i< threadPoolSize;i++){
             WorkerThread workerThread = new WorkerThread(detectedTaskUrlQueue, foundVideoInfoMap, retryCountOnFail);
@@ -53,7 +53,7 @@ public class VideoSniffer {
             try {
                 thread.start();
             }catch (IllegalThreadStateException e){
-                Log.d("VideoSniffer", "线程已启动, Pass");
+                Log.d("yeqinfu", "线程已启动, Pass");
             }
         }
     }
@@ -64,7 +64,7 @@ public class VideoSniffer {
             try {
                 thread.interrupt();
             }catch (Exception e){
-                Log.d("VideoSniffer", "线程已中止, Pass");
+                Log.d("yeqinfu", "线程已中止, Pass");
             }
         }
     }
@@ -83,11 +83,11 @@ public class VideoSniffer {
         @Override
         public void run() {
             super.run();
-            Log.d("WorkerThread", "thread (" + Thread.currentThread().getId() + ") :start");
+            Log.d("yeqinfu", "thread (" + Thread.currentThread().getId() + ") :start");
             while(!Thread.currentThread().isInterrupted()){
                 try {
                     DetectedVideoInfo detectedVideoInfo = detectedTaskUrlQueue.take();
-                    Log.d("WorkerThread", "start taskUrl=" + detectedVideoInfo.getUrl());
+                    Log.d("hahahahhah", "start taskUrl=" + detectedVideoInfo.getUrl());
                     int failCount = 0;
                     while(!detectUrl(detectedVideoInfo)){
                         //如果检测失败
@@ -98,11 +98,12 @@ public class VideoSniffer {
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.d("WorkerThread", "thread (" + Thread.currentThread().getId() +") :Interrupted");
+                    Log.d("yeqinfu","=======InterruptedException==========");
+                    Log.d("yeqinfu", "thread (" + Thread.currentThread().getId() +") :Interrupted");
                     return;
                 }
             }
-            Log.d("WorkerThread", "thread (" + Thread.currentThread().getId() +") :exited");
+            Log.d("yeqinfu", "thread (" + Thread.currentThread().getId() +") :exited");
         }
 
         private boolean detectUrl(DetectedVideoInfo detectedVideoInfo){
@@ -123,21 +124,22 @@ public class VideoSniffer {
                 VideoFormat videoFormat = VideoFormatUtil.detectVideoFormat(url, headerMap.get("Content-Type").toString());
                 if (videoFormat == null) {
                     //检测成功，不是视频
-                    Log.d("WorkerThread", "fail not video taskUrl=" + url);
+                    Log.d("yeqinfu", "fail not video taskUrl=" + url);
                     return true;
                 }
                 VideoInfo videoInfo = new VideoInfo();
+                Log.d("yeqinfu","======================找到视频=");
                 if("m3u8".equals(videoFormat.getName())){
                     double duration = M3U8Util.figureM3U8Duration(url);
                     if(duration<=0){
                         //检测成功，不是m3u8的视频
-                        Log.d("WorkerThread", "fail not m3u8 taskUrl=" + url);
+                        Log.d("yeqinfu", "fail not m3u8 taskUrl=" + url);
                         return true;
                     }
                     videoInfo.setDuration(duration);
                 }else{
                     long size = 0;
-                    Log.d("WorkerThread", JSON.toJSONString(headerMap));
+                    Log.d("yeqinfu", JSON.toJSONString(headerMap));
                     if (headerMap.containsKey("Content-Length") && headerMap.get("Content-Length").size()>0) {
                         try {
                             size = Long.parseLong(headerMap.get("Content-Length").get(0));
@@ -157,11 +159,11 @@ public class VideoSniffer {
                 foundVideoInfoMap.put(url, videoInfo);
                 EventBus.getDefault().post(new NewVideoItemDetectedEvent());
                 //检测成功，是视频
-                Log.d("WorkerThread", "视频found video taskUrl=" + url);
+                Log.d("yeqinfu", "视频found video taskUrl=" + url);
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("WorkerThread", "fail IO错误 taskUrl=" + url);
+                Log.d("yeqinfu", "fail IO错误 taskUrl=" + url);
                 return false;
             }
         }

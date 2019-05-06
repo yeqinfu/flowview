@@ -1,8 +1,10 @@
 package com.example.flowviewtest;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.example.flowviewtest.entity.AppConfig;
+import com.tencent.smtt.sdk.QbSdk;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,6 +24,19 @@ public class MainApplication extends Application {
         super.onCreate();
 //        EventBus.getDefault().register(this);
         onAppInit();
+        QbSdk.initX5Environment(this, new QbSdk.PreInitCallback() {
+            @Override
+            public void onCoreInitFinished() {
+                Log.d("yeqinfu","=================内核初始化完毕===============");
+            }
+
+            @Override
+            public void onViewInitFinished(boolean b) {
+                Log.d("yeqinfu","=================onViewInitFinished===============");
+            }
+        });
+
+
     }
 
     private void onAppInit(){
